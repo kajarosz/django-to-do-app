@@ -1,0 +1,29 @@
+{% extends 'todoapp/base.html' %}
+
+{% block content %}
+{%  if todolist %}
+<div class="row d-flex justify-content-center">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="navbar text-white bg-dark justify-content-between">
+                <a class="navbar-brand">Edit task list</a>
+            </div>
+            <div class="card-body">                
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+
+                        <input id="todolist" class="form-control mr-sm-2" type="search" placeholder="{{todolist.todolist}}" aria-label="Search"
+                        name="todolist" value="{{todolist.todolist}}">
+                    </div>
+                
+                    <button class="btn btn-success my-2 my-sm-0" type="submit" name="save" value="save">Save changes</button> <button class="btn btn-warning text-white my-2 my-sm-0" type="submit" name="cancel" value="cancel">Cancel</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}

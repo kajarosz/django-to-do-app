@@ -5,6 +5,7 @@ from django.contrib import messages
 from .forms import TaskForm, ToDoListForm
 from .models import Task, ToDoList
 from django.views.generic import DeleteView
+from django.contrib.messages.views import SuccessMessageMixin
 
 # Create your views here.
 
@@ -47,7 +48,7 @@ def taskedit(request, pk):
             return redirect(reverse('todoapp:home'))
     else:
         task = Task.objects.get(pk=pk)
-        return render(request, 'todoapp/taskedit.html', {'task': task})
+        return render(request, 'todoapp/task_edit.html', {'task': task})
 
 def taskcomplete(request, pk):
     task = Task.objects.get(pk=pk)
@@ -62,7 +63,22 @@ def taskuncomplete(request, pk):
     task.save()
     return redirect(reverse('todoapp:home'))
 
-class ToDoListDeleteView(DeleteView):
+class ToDoListDeleteView(SuccessMessageMixin, DeleteView):
     model = ToDoList
     success_url = reverse_lazy('todoapp:home')
+    success_message = 'Task list has been deleted.'
  
+def todolistedit(request, pk):
+    if request.method == 'POST':
+        if request.POST.get('save'):
+            todolist = ToDoList.objects.get(pk=pk)
+            form = ToDoListForm(request.POST or None, instance=todolist)
+            if form.is_valid():
+                form.save()
+                messages.success(request, ('Task list has been edited!'))
+                return redirect(reverse('todoapp:home'))
+        elif request.POST.get('cancel'):
+            return redirect(reverse('todoapp:home'))
+    else:
+        todolist = ToDoList.objects.get(pk=pk)
+        return render(request, 'todoapp/todolist_edit.html', {'todolist': todolist})
