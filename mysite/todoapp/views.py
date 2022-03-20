@@ -2,18 +2,25 @@ from audioop import reverse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
-from .forms import TaskForm
-from .models import Task
+from .forms import TaskForm, ToDoListForm
+from .models import Task, ToDoList
 
 # Create your views here.
 
 def home(request):
     if request.method == 'POST':
-        form = TaskForm(request.POST or None)
-        if form.is_valid():
-            form.save()
-            messages.success(request, ('Task has been added to the list!'))
-            return redirect(reverse('todoapp:home'))
+        if request.POST.get('add-task'):
+            form = TaskForm(request.POST or None)
+            if form.is_valid():
+                form.save()
+                messages.success(request, ('Task has been added to the list!'))
+                return redirect(reverse('todoapp:home'))
+        if request.POST.get('add-list'):
+            form = ToDoListForm(request.POST or None)
+            if form.is_valid():
+                form.save()
+                messages.success(request, ('New task list created successfuly!'))
+                return redirect(reverse('todoapp:home'))
     else:
         completed_task_list = Task.objects.filter(completed=True)
         uncompleted_task_list = Task.objects.filter(completed=False)
