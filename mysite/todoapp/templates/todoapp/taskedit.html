@@ -12,6 +12,7 @@
                 <form method="POST">
                     {% csrf_token %}
                         <input class="form-control mr-sm-2" type="hidden" name="completed" value="{{task.completed}}">
+                        <input class="form-control mr-sm-2" type="hidden" name="todolist" value="{{task.todolist_id}}">
                     <div class="form-group">
                         <label for="task">Task</label>
                         <input id="task" class="form-control mr-sm-2" type="search" placeholder="{{task.task}}" aria-label="Search"

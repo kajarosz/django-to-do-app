@@ -1,9 +1,10 @@
 from audioop import reverse
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .forms import TaskForm, ToDoListForm
 from .models import Task, ToDoList
+from django.views.generic import DeleteView
 
 # Create your views here.
 
@@ -15,16 +16,17 @@ def home(request):
                 form.save()
                 messages.success(request, ('Task has been added to the list!'))
                 return redirect(reverse('todoapp:home'))
-        if request.POST.get('add-list'):
+        elif request.POST.get('add-list'):
             form = ToDoListForm(request.POST or None)
             if form.is_valid():
                 form.save()
                 messages.success(request, ('New task list created successfuly!'))
                 return redirect(reverse('todoapp:home'))
     else:
-        completed_task_list = Task.objects.filter(completed=True)
-        uncompleted_task_list = Task.objects.filter(completed=False)
-        return render(request, 'todoapp/home.html', {'completed_task_list': completed_task_list, 'uncompleted_task_list': uncompleted_task_list})
+        todolists = ToDoList.objects.all()
+        completed_tasks = Task.objects.filter(completed=True)
+        uncompleted_tasks = Task.objects.filter(completed=False)
+        return render(request, 'todoapp/home.html', {'completed_tasks': completed_tasks, 'uncompleted_tasks': uncompleted_tasks, 'todolists': todolists})
 
 def taskdelete(request, pk):
     task = Task.objects.get(pk=pk)
@@ -43,7 +45,6 @@ def taskedit(request, pk):
                 return redirect(reverse('todoapp:home'))
         elif request.POST.get('cancel'):
             return redirect(reverse('todoapp:home'))
-
     else:
         task = Task.objects.get(pk=pk)
         return render(request, 'todoapp/taskedit.html', {'task': task})
@@ -60,3 +61,8 @@ def taskuncomplete(request, pk):
     task.completed = False
     task.save()
     return redirect(reverse('todoapp:home'))
+
+class ToDoListDeleteView(DeleteView):
+    model = ToDoList
+    success_url = reverse_lazy('todoapp:home')
+ 

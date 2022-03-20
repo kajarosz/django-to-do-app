@@ -5,7 +5,7 @@ from .models import Task, ToDoList
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['task', 'completed', 'notes']
+        fields = ['task', 'completed', 'notes', 'todolist']
 
 class ToDoListForm(forms.ModelForm):
     class Meta:
