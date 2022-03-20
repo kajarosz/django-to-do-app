@@ -1,0 +1,71 @@
+{% extends 'todoapp/base.html' %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-success alert-dismissable" role="alert">
+    
+    <button class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+<div class="row d-flex justify-content-center">
+    <div class="col-sm-8 mt-3">
+        <div class="card text-center">
+            <div class="navbar text-white bg-dark justify-content-between">
+                <a class="navbar-brand">TO DO LIST</a>
+                <form class="form-inline" method="POST">
+                    {% csrf_token %}
+                    <input class="form-control mr-sm-2" type="search" placeholder="New Task" aria-label="Search"
+                        name="task">
+                    <button class="btn btn-success my-2 my-sm-0" type="submit">Add</button>
+                </form>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Uncompleted tasks</h5>
+                {% if not uncompleted_task_list %}
+                <p class="card-text">Congrats! You have completed all tasks!</p>
+                {% else %}
+                <table class="table">
+                    {% for task in uncompleted_task_list %}
+                    <tr>
+                        <th scope="row">{{task.task}}</th>
+                        <td style="width:300px"><a href="{% url 'todoapp:taskcomplete' task.id %}"><button class="btn btn-success my-2 my-sm-0" type="submit">Complete</button></a>
+                        <a href="{% url 'todoapp:taskedit' task.id %}"><button class="btn btn-warning text-white my-2 my-sm-0" type="submit">Edit</button></a>
+                        <a href="{% url 'todoapp:taskdelete' task.id %}"><button class="btn btn-danger my-2 my-sm-0" type="submit">Delete</button></a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+            </div>
+
+            <div class="card-body">
+                <h5 class="card-title">Completed tasks</h5>
+                {% if not completed_task_list %}
+                <p class="card-text">You haven't completed any tasks yet.</p>
+                {% else %}
+                <table class="table">
+                    {% for task in completed_task_list %}
+                    <tr>
+                        <th scope="row">{{task.task}}</th>
+                        <td style="width:300px"><a href="{% url 'todoapp:taskuncomplete' task.id %}"><button class="btn btn-secondary my-2 my-sm-0" type="submit">Not complete</button></a>
+                        <!-- <td><a href="{% url 'todoapp:taskedit' task.id %}"><button class="btn btn-warning text-white my-2 my-sm-0" type="submit">Edit</button></a></td> -->
+                        <a href="{% url 'todoapp:taskdelete' task.id %}"><button class="btn btn-danger my-2 my-sm-0" type="submit">Delete</button></a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+            </div>
+
+
+            <div class="card-footer text-white bg-danger">
+                Delete list
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
